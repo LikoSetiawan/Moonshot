@@ -19,44 +19,43 @@ struct Address: Codable {
 
 
 struct ContentView: View {
-    let layout = [
-        GridItem(.adaptive(minimum: 80, maximum: 120)),
+    
+    let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    
+    let missions: [Mission] = Bundle.main.decode("missions.json")
+    
+    let columns = [
+        GridItem(.adaptive(minimum: 150))
     ]
+    
     var body: some View {
         NavigationStack {
-            ScrollView(.horizontal) {
-                LazyHGrid(rows: layout) {
-                    ForEach(0..<1000) { number in
-                        Text("Item \(number)")
+            ScrollView{
+                LazyVGrid(columns : columns){
+                    ForEach(missions){mission in
+                        NavigationLink{
+                            Text("Detail View")
+                        } label: {
+                            VStack{
+                                Image(mission.image)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                VStack{
+                                    Text(mission.displayName)
+                                        .font(.headline)
+                                    Text(mission.formattedLaunchDate)
+                                        .font(.caption)
+                                }
+                                .frame(maxWidth : .infinity)
+                            }
+                        }
                     }
                 }
             }
-//            List(0..<5) { row in
-//                    NavigationLink("Row \(row)") {
-//                        Text("Detail \(row)")
-//                    }
-//                }
-//                .navigationTitle("SwiftUI")
+            .navigationTitle("MoonShot")
             
-            Button("Decode JSON"){
-                let input = """
-            {
-                "name": "Taylor Swift",
-                "address": {
-                    "street": "555, Taylor swift avenue",
-                    "city": "Nashville"
-                }
-            }
-            """
-                
-                let data = Data(input.utf8)
-                let decoder = JSONDecoder()
-                if let user = try? decoder.decode(User.self, from: data){
-                    print(user.address.street)
-                    print(user.address.city)
-                    print(user.name)
-                }
-            }
+            
         }
         
         
@@ -79,11 +78,11 @@ struct ContentView: View {
 
 struct CustomText: View {
     let text: String
-
+    
     var body: some View {
         Text(text)
     }
-
+    
     init(_ text: String) {
         print("Creating a new CustomText")
         self.text = text
