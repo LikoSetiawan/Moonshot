@@ -24,69 +24,33 @@ struct ContentView: View {
     
     let missions: [Mission] = Bundle.main.decode("missions.json")
     
-    let columns = [
-        GridItem(.adaptive(minimum: 150))
-    ]
+    @AppStorage("showingGrid") private var showingGrid = true
     
     var body: some View {
         NavigationStack {
-            ScrollView{
-                LazyVGrid(columns : columns){
-                    ForEach(missions){mission in
-                        NavigationLink{
-                            MissionView(mission: mission, astronauts: astronauts)
-                        } label: {
-                            VStack{
-                                Image(mission.image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .padding()
-                                
-                                VStack{
-                                    Text(mission.displayName)
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                    Text(mission.formattedLaunchDate)
-                                        .font(.caption)
-                                        .foregroundStyle(.white.opacity(0.5))
-                                }
-                                .padding(.vertical)
-                                .frame(maxWidth : .infinity)
-                                .background(.lightBackground)
-                            }
-                            .clipShape(.rect(cornerRadius: 10))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.lightBackground)
-                            )
-                        }
+            Group{
+                if showingGrid{
+                    GridView(missions: missions, astronauts: astronauts)
+                }else{
+                    ListView(missions: missions, astronauts: astronauts)
+                }
+            }
+            .toolbar{
+                Button{
+                    showingGrid.toggle()
+                } label: {
+                    if showingGrid{
+                        Label("Show as table", systemImage: "list.dash")
+                    }else{
+                        Label("Show as grid", systemImage: "square.grid.2x2")
                     }
                 }
-                .padding([.horizontal, .bottom])
             }
             .navigationTitle("MoonShot")
             .background(.darkBackground)
             .preferredColorScheme(/*@START_MENU_TOKEN@*/.dark/*@END_MENU_TOKEN@*/)
-            
-            
         }
-        
-        
-        
-        //        VStack {
-        //
-        //
-        //
-        //            Image(.anders)
-        //                .resizable()
-        //                .scaledToFit()
-        ////                .scaledToFill()
-        //                .containerRelativeFrame(.horizontal){size, axis in size * 0.8}
-        //
-        ////                .clipped()
-        //        }
-        //    }
+
     }
 }
 
